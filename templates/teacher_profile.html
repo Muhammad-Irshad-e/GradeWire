@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css' %}">
+    <style>
+        /* Profile Section */
+        .profile-container {
+            max-width: 600px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 40px auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .profile-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .profile-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .profile-table th, .profile-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .profile-table th {
+            background: #f4f4f4;
+            font-weight: bold;
+            width: 30%;
+        }
+
+        .profile-table td {
+            color: #555;
+        }
+
+        /* Form Container (Edit Section) */
+        .form-container {
+            display: none;
+            padding: 20px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .form-container select {
+            height: 40px;
+        }
+
+        .form-container input:focus,
+        .form-container select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .btn-cancel {
+            background: #f44336;
+        }
+
+        .btn-edit {
+            width: auto;
+            padding: 10px 20px;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-container {
+                max-width: 90%;
+            }
+        }
+        .main-content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+    
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Teacher Dashboard</h2>
+        <a href="{% url 'teachHome' %}">Home</a>
+        <a href="{% url 'teacherProfile' %}">Profile</a>
+        <a href="{% url 'teachStAttendance' %}">Attendance</a>
+        <a href="{% url 'view_student_attendance' %}">View Attendance</a>
+        <a href="{% url 'teachStMarks' %}">Marks</a>
+        <a href="{% url 'view_student_marks' %}">View Marks</a>
+        <a href="{% url 'teachStStats' %}">Stats</a>
+        <a href="{% url 'StudentDetail' %}">Students</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div class="profile-container">
+            <h2>Teacher Profile</h2>
+            
+            <!-- Display Mode -->
+            <div id="profile-display">
+                <table class="profile-table">
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ teacher.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>{{ teacher.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Phone</th>
+                        <td>{{ teacher.mobile }}</td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td>{{ teacher.department }}</td>
+                    </tr>
+                </table>
+                <button class="btn btn-edit" onclick="toggleEdit()">Edit Profile</button>
+            </div>
+
+            <!-- Edit Mode -->
+            <div id="profile-edit" class="form-container">
+                <h2>Edit Profile</h2>
+                <form method="POST" action="{% url 'teacherProfile' %}">
+                    {% csrf_token %}
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" value="{{ teacher.name }}" required>
+                    
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="{{ teacher.email }}" required>
+                    
+                    <label for="mobile">Mobile Number</label>
+                    <input type="text" id="mobile" name="mobile" value="{{ teacher.mobile }}" required>
+                    
+                    <label for="department">Select Department</label>
+                    <select name="department" id="department" required>
+                        <option value="" disabled>Select Department</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}" {% if teacher.department.id == course.id %}selected{% endif %}>
+                                {{ course.course_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <button type="submit" class="btn">Save Changes</button>
+                    <button type="button" class="btn btn-cancel" onclick="toggleEdit()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function toggleEdit() {
+            const display = document.getElementById('profile-display');
+            const edit = document.getElementById('profile-edit');
+            if (display.style.display === 'none') {
+                display.style.display = 'block';
+                edit.style.display = 'none';
+            } else {
+                display.style.display = 'none';
+                edit.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

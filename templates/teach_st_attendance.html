@@ -1,0 +1,286 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css'%}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .loading {
+            display: none;
+            color: blue;
+            font-weight: bold;
+        }
+        .main-content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+    
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+
+    .section{
+      margin-top: 35px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Teacher Dashboard</h2>
+        <a href="{% url 'teachHome' %}">Home</a>
+        <a href="{% url 'teacherProfile' %}">Profile</a>
+        <a href="{% url 'teachStAttendance' %}">Attendance</a>
+        <a href="{% url 'view_student_attendance' %}">View Attendance</a>
+        <a href="{% url 'teachStMarks' %}">Marks</a>
+        <a href="{% url 'view_student_marks' %}">View Marks</a>
+
+        <a href="{% url 'teachStStats' %}">Stats</a>
+        <a href="{% url 'StudentDetail' %}">Students</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div id="attendance" class="section">
+            <h2>Manage Attendance</h2>
+            <form id="attendanceForm" method="POST">
+                {% csrf_token %}
+                <label for="date">Select Date:</label>
+                <input type="date" id="date" name="date" required><br><br>
+
+                <label for="department">Department:</label>
+                <select name="department" id="department" required>
+                    <option value="">Select Department</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept }}">{{ dept }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <label for="Class">Class:</label>
+                <select name="Class" id="Class" required>
+                    <option value="">Select Class</option>
+                    {% for year in years %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <label for="subject">Subject:</label>
+                <select name="subject" id="subject" required>
+                    <option value="">Select Subject</option>
+                </select><br><br>
+
+                <label for="hour">Hour:</label>
+                <select name="hour" id="hour" required>
+                    <option value="">Select Hour</option>
+                    {% for h in hours %}
+                        <option value="{{ h }}">{{ h }}</option>
+                    {% endfor %}
+                </select><br><br>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Present</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody"></tbody>
+                </table><br><br>
+
+                <button type="submit" id="submitButton">Submit Attendance</button>
+                <span class="loading" id="loadingIndicator">Loading...</span>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function loadSubjects() {
+            const department = document.getElementById('department').value;
+            const Class = document.getElementById('Class').value;
+            const subjectSelect = document.getElementById('subject');
+
+            if (!department || !Class) {
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                return;
+            }
+
+            fetch(`/load_subjects_by_dept_class/?department=${department}&Class=${Class}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Subjects data:", data);
+                    subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                    if (data.subjects && data.subjects.length > 0) {
+                        data.subjects.forEach(subject => {
+                            const option = document.createElement('option');
+                            option.value = subject.id;
+                            option.textContent = subject.name;
+                            subjectSelect.appendChild(option);
+                        });
+                    } else {
+                        console.warn("No subjects returned:", data.message || "No message provided");
+                        alert(data.message || "No subjects available for this selection.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("An error occurred while loading subjects: " + error.message);
+                });
+        }
+
+        function loadStudents() {
+            const department = document.getElementById('department').value;
+            const Class = document.getElementById('Class').value;
+            const studentTableBody = document.getElementById('studentTableBody');
+
+            if (!department || !Class) {
+                studentTableBody.innerHTML = '';
+                return;
+            }
+
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.style.display = 'inline';
+
+            fetch(`/load_students_by_dept_year/?department=${department}&Class=${Class}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Students data:", data);
+                    studentTableBody.innerHTML = '';
+                    data.students.forEach(student => {
+                        const row = document.createElement('tr');
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = student.name;
+                        row.appendChild(nameCell);
+
+                        const checkboxCell = document.createElement('td');
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = `student-${student.id}`;
+                        checkboxCell.appendChild(checkbox);
+                        row.appendChild(checkboxCell);
+
+                        studentTableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("An error occurred while loading students: " + error.message);
+                })
+                .finally(() => {
+                    loadingIndicator.style.display = 'none';
+                });
+        }
+
+        document.getElementById('department').addEventListener('change', () => {
+            loadSubjects();
+            loadStudents();
+        });
+        document.getElementById('Class').addEventListener('change', () => {
+            loadSubjects();
+            loadStudents();
+        });
+
+        document.getElementById('attendanceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+
+            const attendanceData = {};
+            const date = document.getElementById('date').value;
+            const hour = document.getElementById('hour').value;
+            const subject = document.getElementById('subject').value;
+
+            if (!date || !hour || !subject) {
+                alert("Please select a date, hour, and subject.");
+                submitButton.disabled = false;
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll('#studentTableBody input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const studentId = checkbox.id.split('-')[1];
+                const isPresent = checkbox.checked;
+                attendanceData[studentId] = isPresent ? 'present' : 'absent';
+            });
+
+            fetch('/record_attendance/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    date: date,
+                    hour: hour,
+                    subject: subject,
+                    attendance_data: attendanceData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.warning) {
+                    alert(data.warning);
+                } else if (data.success) {
+                    alert(data.success);
+                    document.getElementById('attendanceForm').reset();
+                    loadSubjects();
+                    loadStudents();
+                }
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                alert("An error occurred while recording attendance: " + error.message);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+            });
+        });
+
+        loadSubjects();
+        loadStudents();
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

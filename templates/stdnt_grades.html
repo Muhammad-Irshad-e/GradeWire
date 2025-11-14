@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/stdnt-style.css' %}">
+    <style>
+        .main {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 7px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+    
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+        .header{
+            margin-top: 50px;
+        }
+    .section{
+      margin-top: 35px;
+    }
+    </style>
+  
+</head>
+<body>
+    <!-- Menu Toggle -->
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Student Dashboard</h3>
+        <a href="{% url 'studentHome' %}">Home</a>
+        <a href="{% url 'student_profile' %}">Profile</a>
+        <a href="{% url 'studentAttendance' %}">Attendance</a>
+        <a href="{% url 'studentGrades' %}">Grades</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <!-- Grades Section -->
+        <div id="grades" class="section active">
+            <h1>Grades</h1>
+            
+            <!-- Filter Form -->
+            <form method="post" id="filterForm" class="mb-4">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-5">
+                        <label for="semester" class="form-label">Semester</label>
+                        <select name="semester" id="semester" class="form-select">
+                            <option value="">All Semesters</option>
+                            {% for semester in semesters %}
+                                <option value="{{ semester }}" {% if selected_semester == semester %}selected{% endif %}>
+                                    {{ semester }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="exam_name" class="form-label">Exam Name</label>
+                        <select name="exam_name" id="exam_name" class="form-select">
+                            <option value="">All Exams</option>
+                            {% for exam_name in exam_names %}
+                                <option value="{{ exam_name }}" {% if selected_exam_name == exam_name %}selected{% endif %}>
+                                    {{ exam_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Show Result</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Grades Table (Shown only after clicking "Show Result") -->
+            {% if show_results %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Internal Marks</th>
+                            <th>External Marks</th>
+                            <th>Total Marks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                            <tr>
+                                <td>{{ grade.subject.name }}</td>
+                                <td>{{ grade.internalMarks }}</td>
+                                <td>{{ grade.externalMarks }}</td>
+                                <td>{{ grade.total_marks }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    {% if selected_semester or selected_exam_name %}
+                                        No grades available for the selected filters.
+                                    {% else %}
+                                        No grades available.
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css'%}">
+    <style>
+        /* Small button styling */
+.small-btn {
+font-size: 12px;            /* Smaller font size */
+padding: 5px 10px;          /* Smaller padding */
+background-color: #007bff;  /* Button color */
+color: white;               /* Text color */
+border: none;               /* No border */
+border-radius: 5px;         /* Rounded corners */
+cursor: pointer;            /* Pointer cursor on hover */
+}
+.content{
+    position: relative;
+}
+.back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+.small-btn:hover {
+background-color: #0056b3;  /* Darker shade on hover */
+}
+
+/* Styling for the hidden form */
+.add-course-form {
+display: none;  /* Hidden by default */
+margin-top: 20px;
+padding: 20px;
+background-color: #f8f9fa;
+border: 1px solid #ddd;
+border-radius: 5px;
+width: 300px;
+}
+
+.add-course-form input {
+width: 100%;                /* Full width */
+padding: 8px;               /* Padding inside input fields */
+margin: 10px 0;             /* Space between input fields */
+border: 1px solid #ccc;    /* Border color */
+border-radius: 4px;        /* Rounded corners */
+}
+
+.add-course-form button {
+padding: 8px 15px;
+margin: 5px;
+background-color: #28a745;  /* Green background for submit */
+color: white;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+}
+
+.add-course-form button[type="button"] {
+background-color: #dc3545;  /* Red background for cancel */
+}
+
+.add-course-form button:hover {
+opacity: 0.8;  /* Slight transparency on hover */
+}
+
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}" onclick="showSection('home')">Home</a>
+        <a href="{% url 'ManageStudent' %}"  >Manage Students</a>
+        <a href="{% url 'approve_students' %}" >Approve Students</a>
+
+        <a href="{% url 'ManageTeacher' %}" >Manage Teachers</a>
+        <a href="{% url 'ManageCourse' %}" >Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}" >Manage Subjects</a>
+
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div id="manage-courses" class="section active">
+            <h2>Approve Students</h2>
+            
+
+            <!-- Hidden Form to Add Course -->
+            
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.register_id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="student_id" value="{{ student.id }}">
+                                    <button type="submit">Approve</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No students waiting for approval.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table> 
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+
+
+    
+</body>
+</html>
+
+
+
+

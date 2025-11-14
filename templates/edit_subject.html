@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Teacher</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css'%}">
+    <style>
+        .content form {
+            width: 80%; /* Adjust as needed */
+            margin: 0 auto; /* Center the form */
+            padding: 20px;
+            background-color: #f9f9f9; /* Light gray background for the form */
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .content form div {
+            margin-bottom: 15px;
+        }
+
+        .content form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .content form input[type="text"],
+        .content form input[type="email"],
+        .content form input[type="password"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .content form button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .content form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .content{
+    position: relative;
+}
+.back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}" onclick="showSection('home')">Home</a>
+        <a href="{% url 'ManageStudent' %}" >Manage Students</a>
+        <a href="{% url 'approve_students' %}" >Approve Students</a>
+
+        <a href="{% url 'ManageTeacher' %}" >Manage Teachers</a>
+        <a href="{% url 'ManageCourse' %}" >Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}" >Manage Subjects</a>
+
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <h2>Edit Subject</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <label for="Semester">Semester</label>
+                <input type="semester" name="Semester" value="{{ subject.semester }}" placeholder="Semester" required>
+            </div>
+            <div>
+                <label for="subjectCode">Subject Code</label>
+                <input type="text" name="subjectCode" value="{{ subject.subject_code }}" placeholder="Subject Code" required>
+            </div>
+            
+            <div>
+                <label for="subjectName">Subject</label>
+                <input type="text" name="subjectName" value="{{ subject.name }}" placeholder="Subject Name" required>
+            </div>
+            <div>
+                <label for="courseName">Course</label>
+                <input type="text" name="courseName" value="{{ subject.course }}" placeholder="course Name" required>
+            </div>
+     
+            <button type="submit">Update Subject</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+    
+</body>
+</html>

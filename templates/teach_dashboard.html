@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css'%}">
+    <style>
+        .main-content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+    
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+        .header{
+            margin-top: 50px;
+        }
+    .section{
+      margin-top: 35px;
+    }
+    </style>
+  
+</head>
+<body>
+
+    
+        <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+        <!-- Sidebar -->
+        <div class="sidebar">
+
+            <h2>Teacher Dashboard</h2>
+            
+            <a href="{% url 'teachHome' %}" >Home</a>
+            <a href="{% url 'teacherProfile' %}" >Profile</a>
+            <a href="{% url 'teachStAttendance' %}" >Attendance</a>
+            <a href="{% url 'view_student_attendance' %}" > View Attendance</a>
+
+            <a href="{% url 'teachStMarks' %}" >Marks</a>
+            <a href="{% url 'view_student_marks' %}">View Marks</a>
+
+            <a href="{% url 'teachStStats' %}">Stats</a>
+            <a href="{% url 'StudentDetail' %}" >Students</a>
+            <!-- Logout option at the very bottom (only for Desktop) -->
+            <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+           
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+            <div class="header">
+                <h1>Welcome, Teacher</h1>
+            </div>
+            <!-- Home Section -->
+        
+
+            <!-- Profile Section -->
+           
+
+           <!-- Manage Attendance Section -->
+            
+
+            <!-- Manage Marks Section -->
+           
+
+            <!-- View Students Section -->
+           
+        </div>
+    
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+    </script>
+</body>
+</html>

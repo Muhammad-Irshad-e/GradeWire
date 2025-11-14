@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/stdnt-style.css'%}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .main {
+            position: relative;
+            margin-left: 270px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-top: 35px;
+        }
+
+        .section h1 {
+            color: #2C3E50;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .chart-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .section ul li {
+            background-color: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            transition: background-color 0.3s;
+        }
+
+        .section ul li:hover {
+            background-color: #e9ecef;
+        }
+        @media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    .sidebar h3 {
+      display: none; /* Hide title on smaller screens */
+    }
+
+    .sidebar a {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .menu-toggle {
+        display: block;
+        background-color: #2c3e50;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .main {
+      margin-left: 0;
+    }
+  }
+
+
+    .back-button {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        padding: 7px 20px;
+        cursor: pointer;
+        color: #fff;
+        background-color: #1e90ff;
+        border:none;
+        border-radius: 3px;
+    }
+
+    .back-button:hover {
+        background-color: #0c60b5;
+    }
+    .header{
+        margin-top: 50px;
+    }
+
+
+    </style>
+</head>
+<body>
+    <!-- Menu Toggle -->
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Student Dashboard</h3>
+        <a href="{% url 'studentHome' %}" data-target="home">Home</a>
+        <a href="{% url 'student_profile' %}" data-target="profile">Profile</a>
+        <a href="{% url 'studentAttendance' %}" data-target="attendance">Attendance</a>
+        <a href="{% url 'studentGrades' %}" data-target="grades">Grades</a>
+        <a href="{% url 'logout' %}" data-target="logout" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div id="attendance" class="section active">
+            <h1>Attendance</h1>
+            <div class="chart-container">
+                <canvas id="attendanceChart"></canvas>
+            </div>
+            <h5 class="mt-3">Dates You Were Absent (Less than 5 Hours Present):</h5>
+            <ul>
+                {% for date in absent_dates %}
+                <li>{{ date }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <script>
+            const p_count = "{{ present_count }}";  // Full-day attendance
+            const a_count = "{{ absent_count }}";   // Absent days
+        
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Full-Day Present', 'Absent'],
+                    datasets: [{
+                        data: [p_count, a_count],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',  // Full-Day Present
+                            'rgba(255, 99, 132, 0.6)'   // Absent
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            enabled: true,
+                        }
+                    }
+                }
+            });
+        </script>
+        </body>
+</html>

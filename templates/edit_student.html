@@ -1,0 +1,155 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css' %}">
+    <style>
+        /* Styling for the form */
+        .edit-student-form {
+            margin-top: 20px;      /* Space from the top */
+            padding: 20px;         /* Internal padding */
+            background-color: #f8f9fa; /* Light background color */
+            border: 1px solid #ddd; /* Border styling */
+            border-radius: 5px;    /* Rounded corners */
+            width: 300px;          /* Consistent width */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        /* Input fields in the form */
+        .edit-student-form input, 
+        .edit-student-form select {
+            width: 100%;           /* Full width for inputs */
+            padding: 8px;          /* Space inside inputs */
+            margin: 10px 0;        /* Space between inputs */
+            border: 1px solid #ccc; /* Gray border for inputs */
+            border-radius: 4px;    /* Rounded corners for inputs */
+        }
+
+        /* Buttons in the form */
+        .edit-student-form button {
+            padding: 8px 15px;       /* Padding for buttons */
+            margin: 5px;             /* Space around buttons */
+            background-color: #28a745; /* Green for submit button */
+            color: white;            /* White text */
+            border: none;            /* No border */
+            border-radius: 5px;      /* Rounded corners */
+            cursor: pointer;         /* Pointer cursor on hover */
+        }
+
+        .edit-student-form button[type="button"] {
+            background-color: #dc3545; /* Red for cancel button */
+        }
+
+        .edit-student-form button:hover {
+            opacity: 0.9;            /* Slight transparency on hover */
+        }
+
+        /* Responsive design for smaller screens */
+        @media screen and (max-width: 600px) {
+            .edit-student-form {
+                width: 90%;          /* Reduce width for smaller screens */
+            }
+        }
+        .content{
+    position: relative;
+}
+.back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}">Home</a>
+        <a href="{% url 'ManageStudent' %}" class="active">Manage Students</a>
+        <a href="{% url 'ManageTeacher' %}">Manage Teachers</a>
+        <a href="{% url 'ManageCourse' %}">Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}">Manage Subjects</a>
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div class="section active">
+            <h2>Edit Student</h2>
+            <div class="edit-student-form">
+                {% if messages %}
+                    <div style="color: red; margin-bottom: 10px;">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <form method="POST" action="{% url 'edit_student' student.id %}">
+                    {% csrf_token %}
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" value="{{ student.name }}" required>
+
+                    <label for="Class">Class</label>
+                    <select id="student_class" name="Class" required>
+                        <option value="">Select Class</option>
+                        <option value="1st Year" {% if student.Class == "1st Year" %}selected{% endif %}>1st Year</option>
+                        <option value="2nd Year" {% if student.Class == "2nd Year" %}selected{% endif %}>2nd Year</option>
+                        <option value="3rd Year" {% if student.Class == "3rd Year" %}selected{% endif %}>3rd Year</option>
+                    </select>
+
+                    <label for="department">Department</label>
+                    <select id="department" name="department" required>
+                        <option value="">Select Department</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}" {% if student.department and student.department.id == course.id %}selected{% endif %}>
+                                {{ course.course_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="register_id">Register ID</label>
+                    <input type="text" id="register_id" name="register_id" value="{{ student.register_id }}" required>
+
+                    <label for="mobile">Mobile</label>
+                    <input type="tel" id="mobile" name="mobile" value="{{ student.mobile }}" pattern="[0-9]{10}" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ student.email }}" required>
+
+                    <label for="parent">Parent Name</label>
+                    <input type="text" id="parent" name="parent" value="{{ student.parent }}">
+
+                    <label for="parent_no">Parent Phone Number</label>
+                    <input type="tel" id="parent_no" name="parent_no" value="{{ student.parent_no }}" pattern="[0-9]{10}">
+
+                    <button type="submit">Save Changes</button>
+                    <button type="button" id="cancelButton">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+    <script>
+        document.getElementById('cancelButton').addEventListener('click', function() {
+            window.location.href = '{% url "ManageStudent" %}';
+        });
+    </script>
+</body>
+</html>
+

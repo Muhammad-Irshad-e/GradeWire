@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Student Marks</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css' %}">
+    <style>
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .marks-table th, .marks-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .marks-table th {
+            background-color: #f2f2f2;
+        }
+        .main-content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+    
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+
+    .section{
+      margin-top: 35px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Teacher Dashboard</h2>
+        <a href="{% url 'teachHome' %}">Home</a>
+        <a href="{% url 'teacherProfile' %}">Profile</a>
+        <a href="{% url 'teachStAttendance' %}">Attendance</a>
+        <a href="{% url 'view_student_attendance' %}">View Attendance</a>
+        <a href="{% url 'teachStMarks' %}">Marks</a>
+        <a href="{% url 'view_student_marks' %}">View Marks</a>
+        <a href="{% url 'teachStStats' %}">Stats</a>
+        <a href="{% url 'StudentDetail' %}">Students</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <h2>View Student Marks</h2>
+
+        <form method="get" action="{% url 'view_student_marks' %}">
+            <!-- Department Selection -->
+            <label for="department">Select Department:</label>
+            <select id="department" name="department" required onchange="updateCourses()">
+                <option value="">Select Department</option>
+                {% for course in courses %}
+                    <option value="{{ course.id }}" {% if course.id|stringformat:'s' == selected_department %}selected{% endif %}>
+                        {{ course.course_name }}
+                    </option>
+                {% endfor %}
+            </select><br><br>
+
+            <!-- Semester Selection -->
+            <label for="semester">Select Semester:</label>
+            <select id="semester" name="semester" required onchange="updateSubjects()">
+                <option value="">Select Semester</option>
+                {% for choice in semester_choices %}
+                    <option value="{{ choice.0 }}" {% if choice.0 == selected_semester %}selected{% endif %}>
+                        {{ choice.1 }}
+                    </option>
+                {% endfor %}
+            </select><br><br>
+
+            <!-- Subject Selection -->
+            <label for="subject">Select Subject:</label>
+            <select id="subject" name="subject" required>
+                <option value="">Select Subject</option>
+                {% for subject in subjects %}
+                    <option value="{{ subject.id }}" {% if subject.id|stringformat:'s' == selected_subject %}selected{% endif %}>
+                        {{ subject.name }}
+                    </option>
+                {% endfor %}
+            </select><br><br>
+
+            <!-- Exam Name Selection -->
+            <label for="exam_name">Exam Name:</label>
+            <select id="exam_name" name="exam_name" required>
+                <option value="">Select Exam</option>
+                {% for choice in exam_choices %}
+                    <option value="{{ choice.0 }}" {% if choice.0 == selected_exam %}selected{% endif %}>
+                        {{ choice.1 }}
+                    </option>
+                {% endfor %}
+            </select><br><br>
+
+            <button type="submit">View Marks</button>
+        </form>
+
+        {% if marks %}
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th>Register Number</th>
+                        <th>Student Name</th>
+                        <th>Internal Marks</th>
+                        <th>External Marks</th>
+                        <th>Total Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mark in marks %}
+                        <tr>
+                            <td>{{ mark.registerId.register_id }}</td>
+                            <td>{{ mark.registerId.name }}</td>
+                            <td>{{ mark.internalMarks }}</td>
+                            <td>{{ mark.externalMarks }}</td>
+                            <td>{{ mark.internalMarks|add:mark.externalMarks }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif selected_department and selected_semester and selected_subject and selected_exam %}
+            <p>No marks found for the selected criteria.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function updateSubjects() {
+            const department = document.getElementById('department').value;
+            const semester = document.getElementById('semester').value;
+            
+            if (department && semester) {
+                fetch(`{% url 'view_student_marks' %}?department=${department}&semester=${semester}&ajax=1`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(subjects => {
+                    const subjectSelect = document.getElementById('subject');
+                    subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                    subjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject.id;
+                        option.textContent = subject.name;
+                        subjectSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching subjects:', error));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('department').addEventListener('change', updateSubjects);
+            document.getElementById('semester').addEventListener('change', updateSubjects);
+        });
+    </script>
+</body>
+</html>

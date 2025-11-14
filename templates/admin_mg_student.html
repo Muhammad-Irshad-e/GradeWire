@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css' %}">
+    <style>
+/* Styling for the hidden form */
+.add-student-form {
+    display: none;                /* Hidden by default */
+    margin: 20px auto;            /* Centered with space from the top */
+    padding: 25px;                /* Increased padding for comfort */
+    background-color: #ffffff;    /* White background for a clean look */
+    border: none;                 /* Removed border for a modern flat design */
+    border-radius: 8px;           /* Slightly larger rounded corners */
+    width: 550px;                 /* Slightly wider for better spacing */
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1); /* Softer, deeper shadow */
+    transition: all 0.3s ease;    /* Smooth transition for visibility toggle */
+}
+.content{
+    position: relative;
+}
+.back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+/* Form labels */
+.add-student-form label {
+    font-weight: 600;             /* Bold labels for clarity */
+    color: #333;                  /* Darker text for better contrast */
+    display: block;               /* Ensures labels stack above inputs */
+    margin-bottom: 5px;           /* Space between label and input */
+}
+
+/* Input fields and select dropdowns */
+.add-student-form input, 
+.add-student-form select {
+    width: 100%;                  /* Full width */
+    padding: 10px;                /* More padding for comfort */
+    margin: 8px 0 15px 0;         /* Adjusted spacing between fields */
+    border: 1px solid #e0e0e0;    /* Lighter border for subtlety */
+    border-radius: 6px;           /* Softer corners */
+    font-size: 14px;              /* Readable font size */
+    background-color: #f9f9f9;    /* Light gray background for inputs */
+    transition: border-color 0.3s ease; /* Smooth border color change */
+}
+
+/* Focus state for inputs and selects */
+.add-student-form input:focus, 
+.add-student-form select:focus {
+    border-color: #28a745;         /* Green border on focus to match submit button */
+    outline: none;                /* Remove default outline */
+    background-color: #fff;       /* White background on focus */
+}
+
+/* Buttons in the form */
+.add-student-form button {
+    padding: 10px 20px;           /* Larger padding for better click area */
+    margin: 5px 5px 0 0;          /* Adjusted spacing */
+    background-color: #28a745;    /* Green for submit */
+    color: white;                 /* White text */
+    border: none;                 /* No border */
+    border-radius: 6px;           /* Matching rounded corners */
+    cursor: pointer;              /* Pointer on hover */
+    font-weight: 500;             /* Medium weight for readability */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+}
+
+/* Cancel button specific styling */
+.add-student-form button[type="button"] {
+    background-color: #dc3545;    /* Red for cancel */
+}
+
+/* Hover effects for buttons */
+.add-student-form button:hover {
+    opacity: 0.9;                 /* Slight transparency */
+    transform: translateY(-2px);  /* Subtle lift effect */
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+    .add-student-form {
+        width: 90%;               /* Full width on small screens */
+        margin: 10px auto;        /* Reduced top margin */
+        padding: 15px;            /* Reduced padding */
+    }
+
+    .add-student-form input, 
+    .add-student-form select {
+        font-size: 13px;          /* Slightly smaller text */
+    }
+
+    .add-student-form button {
+        padding: 8px 15px;        /* Smaller buttons */
+    }
+}    
+/* Styling for Edit and Delete buttons */
+.action-btn {
+    padding: 5px 10px;         /* Smaller padding for compact size */
+    text-decoration: none;     /* Remove underline */
+    font-size: 12px;          /* Smaller font size */
+    border-radius: 4px;       /* Rounded corners */
+    display: inline-block;    /* Inline-block for proper spacing */
+    transition: all 0.2s ease; /* Smooth transition for hover effects */
+}
+
+/* Edit button specific styling */
+.edit-btn {
+    background-color: #11a8d2; /* Yellow background */
+    color: #fff;           /* Dark text for contrast */
+    border: 1px solid #11a8d2; /* Slightly darker border */
+}
+
+.edit-btn:hover {
+    background-color: #118cad; /* Darker yellow on hover */
+    color: #fff;
+}
+
+/* Delete button specific styling */
+.delete-btn {
+    background-color: #dc3545; /* Red background */
+    color: white;             /* White text */
+    border: 1px solid #c82333; /* Slightly darker border */
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+    color: white;
+}
+
+/* Add spacing between buttons */
+.action-btn + .action-btn {
+    margin-left: 8px;         /* Space between Edit and Delete buttons */
+}
+</style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}" onclick="showSection('home')">Home</a>
+        <a href="{% url 'ManageStudent' %}">Manage Students</a>
+        <a href="{% url 'approve_students' %}" >Approve Students</a>
+
+        <a href="{% url 'ManageTeacher' %}">Manage Teachers</a>
+        <a href="{% url 'ManageCourse' %}">Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}">Manage Subjects</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div id="manage-students" class="section active">
+            <h2>Manage Students</h2>
+            <div class="form-container">
+                <input type="text" id="searchStudent" placeholder="Search students..." oninput="searchStudent()" style="width: 400px;"/>
+                <button onclick="searchStudent()" style="width: 200px;">Search</button>
+                <button id="cancelSearch" onclick="resetSearch()" style="display: none; width: 200px;">Cancel</button>
+                <p id="noResultsMessage" style="display: none; color: red;">No matching students found.</p>
+                <button class="small-btn" onclick="toggleAddStudentSection()" style="width: 200px;">Add Student</button>
+            </div>
+
+            <!-- Hidden Form to Add Student -->
+            <div id="addStudentForm" class="add-student-form">
+                <form method="POST" action="{% url 'add_student' %}">
+                    {% csrf_token %}
+                    <label for="name">Name</label>
+                    <input type="text" id="StudentName" placeholder="Name" name="name" required>
+                    <br><br>
+
+                    <label for="Class">Class</label>
+                    <select id="student_class" name="Class" required>
+                        <option value="">Select Class</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                    </select>
+                    <br>
+
+                    <label for="department">Department</label>
+                    <select id="department" name="department" required>
+                        <option value="">Select Department</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.course_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+
+                    <label for="register_id">Register ID</label>
+                    <input type="text" id="register_id" name="register_id" placeholder="Register ID" required>
+
+                    <label for="mobile">Mobile</label>
+                    <input type="tel" id="mobile" placeholder="Mobile" name="mobile" pattern="[0-9]{10}" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Email" name="email" required>
+
+                    <label for="parent">Parent Name</label>
+                    <input type="text" id="parent" placeholder="Parent Name" name="parent">
+
+                    <label for="parent_no">Parent Phone Number</label>
+                    <input type="tel" id="parent_no" placeholder="Parent Phone Number" name="parent_no" pattern="[0-9]{10}">
+                    <label for="id_password">Password</label>
+                    <input type="password" id="password" placeholder="Password" name="password" >
+                    <button type="submit">Submit</button>
+                    <button type="button" onclick="toggleAddStudentSection()">Cancel</button>
+                </form>
+            </div>
+
+            <div id="studentTableSection" class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Department</th>
+                            <th>Register id</th>
+                            <th>Mobile</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        {% for s in student %}
+                        <tr>
+                            <td>{{ s.name }}</td>
+                            <td>{{ s.Class }}</td>
+                            <td>{{ s.department.course_name }}</td>
+                            <td>{{ s.register_id }}</td>
+                            <td>{{ s.mobile }}</td>
+                            <td>{{ s.email }}</td>
+                            <td>
+                                <a href="{% url 'edit_student' s.id %}" class="action-btn edit-btn">Edit</a>  
+                                <a href="{% url 'delete_student' s.id %}" onclick="return confirm('Are you sure you want to delete this student?');" class="action-btn delete-btn">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle the visibility of the Add Student form and table
+        function toggleAddStudentSection() {
+            const form = document.getElementById('addStudentForm');
+            const table = document.getElementById('studentTableSection');
+            const button = document.querySelector('.small-btn');
+
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+                table.style.display = 'none';
+                button.textContent = 'Show Students';
+            } else {
+                form.style.display = 'none';
+                table.style.display = 'block';
+                button.textContent = 'Add Student';
+            }
+        }
+
+        // Ensure the form is hidden by default on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('addStudentForm').style.display = 'none';
+        });
+
+        // Search functionality
+        function searchStudent() {
+            const searchValue = document.getElementById('searchStudent').value.toLowerCase();
+            const tableRows = document.getElementById('studentTableBody').querySelectorAll('tr');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            const cancelSearchButton = document.getElementById('cancelSearch');
+            let matchFound = false;
+
+            tableRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+                if (rowText.includes(searchValue)) {
+                    row.style.display = '';
+                    matchFound = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (!matchFound && searchValue !== '') {
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+
+            if (searchValue !== '') {
+                cancelSearchButton.style.display = 'inline';
+            } else {
+                cancelSearchButton.style.display = 'none';
+            }
+        }
+
+        function resetSearch() {
+            const tableRows = document.getElementById('studentTableBody').querySelectorAll('tr');
+            const searchInput = document.getElementById('searchStudent');
+            const noResultsMessage = document.getElementById('noResultsMessage');
+            const cancelSearchButton = document.getElementById('cancelSearch');
+
+            searchInput.value = '';
+            tableRows.forEach(row => {
+                row.style.display = '';
+            });
+            noResultsMessage.style.display = 'none';
+            cancelSearchButton.style.display = 'none';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+</body>
+</html>

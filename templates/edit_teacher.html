@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Teacher</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css' %}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            margin-left: 250px; /* Adjust based on sidebar width */
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .content h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        .teacher-form {
+            width: 50%; /* Adjust width as needed */
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .teacher-form div {
+            margin-bottom: 20px;
+        }
+
+        .teacher-form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        .teacher-form input[type="text"],
+        .teacher-form input[type="email"],
+        .teacher-form input[type="password"],
+        .teacher-form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #333;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .teacher-form input[type="text"]:focus,
+        .teacher-form input[type="email"]:focus,
+        .teacher-form input[type="password"]:focus,
+        .teacher-form select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .teacher-form select {
+            background-color: #f9f9f9;
+            cursor: pointer;
+        }
+
+        .teacher-form button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .teacher-form button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .teacher-form {
+                width: 90%;
+            }
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+        .content{
+    position: relative;
+}
+.back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}" onclick="showSection('home')">Home</a>
+        <a href="{% url 'ManageStudent' %}" >Manage Students</a>
+        <a href="{% url 'approve_students' %}" >Approve Students</a>
+        <a href="{% url 'ManageTeacher' %}" >Manage Teachers</a>
+        <a href="{% url 'ManageCourse' %}" onclick="showSection('manage-courses')">Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}" >Manage Subjects</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <h2>Edit Teacher</h2>
+        <form method="POST" class="teacher-form">
+            {% csrf_token %}
+            <div>
+                <label for="teacherName">Teacher Name</label>
+                <input type="text" name="teacherName" value="{{ teacher.name }}" placeholder="Enter teacher name" required>
+            </div>
+            
+            <div>
+                <label for="teacherEmail">Email</label>
+                <input type="email" name="teacherEmail" value="{{ teacher.email }}" placeholder="Enter email" required>
+            </div>
+
+            <div>
+                <label for="teacherReg">Teacher ID</label>
+                <input type="text" name="teacherReg" value="{{ teacher.teacher_id }}" placeholder="Enter teacher ID" required>
+            </div>
+
+            <div>
+                <label for="teacherMobile">Mobile</label>
+                <input type="text" name="teacherMobile" value="{{ teacher.mobile }}" placeholder="Enter mobile number" required>
+            </div>
+            
+            <div>
+                <label for="teacherPassword">Password</label>
+                <input type="password" name="teacherPassword" value="{{ teacher.password }}" placeholder="Enter password" required>
+            </div>
+
+            <div>
+                <label for="teacherDepartment">Department</label>
+                <select name="teacherDepartment" id="teacherDepartment" required>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}" {% if course.id == teacher.department.id %}selected{% endif %}>
+                            {{ course.course_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit">Update Teacher</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+</body>
+</html>

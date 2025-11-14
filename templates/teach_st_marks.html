@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Marks</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css' %}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+
+
+        .loading {
+            display: none;
+            color: blue;
+            font-weight: bold;
+        }
+    .main-content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+    
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+
+    .section{
+      margin-top: 35px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Teacher Dashboard</h2>
+        <a href="{% url 'teachHome' %}">Home</a>
+        <a href="{% url 'teacherProfile' %}">Profile</a>
+        <a href="{% url 'teachStAttendance' %}">Attendance</a>
+        <a href="{% url 'view_student_attendance' %}">View Attendance</a>
+        <a href="{% url 'teachStMarks' %}">Marks</a>
+        <a href="{% url 'view_student_marks' %}">View Marks</a>
+        <a href="{% url 'teachStStats' %}">Stats</a>
+        <a href="{% url 'StudentDetail' %}">Students</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <h2>Record Student Marks</h2>
+
+        <form id="marksForm" method="post">
+            {% csrf_token %}
+            <label for="course">Select Course:</label>
+            <select name="course" id="course" required>
+                <option value="">Select Course</option>
+                {% for course in courses %}
+                    <option value="{{ course }}">{{ course }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="semester">Select Semester:</label>
+            <select name="semester" id="semester" required>
+                <option value="">Select Semester</option>
+                {% for semester in semesters %}
+                    <option value="{{ semester }}">{{ semester }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="exam_name">Exam Name:</label>
+            <select name="exam_name" id="exam_name" required>
+                <option value="">Select Exam</option>
+                {% for value, label in form.exam_name.field.choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select><br><br>
+
+            <label for="subject">Select Subject:</label>
+            <select name="subject" id="subject" required>
+                <option value="">Select Subject</option>
+            </select><br><br>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Register ID</th>
+                        <th>Name</th>
+                        <th>Internal Marks</th>
+                        <th>External Marks</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody"></tbody>
+            </table><br>
+
+            <button type="submit" id="submitButton">Submit Marks</button>
+            <span class="loading" id="loadingIndicator">Loading...</span>
+        </form>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        }
+
+        function loadSubjects() {
+            const course = document.getElementById('course').value;
+            const semester = document.getElementById('semester').value;
+            const subjectSelect = document.getElementById('subject');
+
+            if (!course || !semester) {
+                subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                return;
+            }
+
+            fetch(`/load_subjects_by_course_semester/?course=${encodeURIComponent(course)}&semester=${semester}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Subjects data:", data);
+                    subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+                    if (data.subjects && data.subjects.length > 0) {
+                        data.subjects.forEach(subject => {
+                            const option = document.createElement('option');
+                            option.value = subject.id;
+                            option.textContent = subject.name;
+                            subjectSelect.appendChild(option);
+                        });
+                    } else {
+                        console.warn("No subjects returned:", data.message || "No message provided");
+                        alert(data.message || "No subjects available for this selection.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("Error loading subjects: " + error.message);
+                });
+        }
+
+        function loadStudents() {
+            const course = document.getElementById('course').value;
+            const semester = document.getElementById('semester').value;
+            const studentTableBody = document.getElementById('studentTableBody');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            if (!course || !semester) {
+                studentTableBody.innerHTML = '';
+                return;
+            }
+
+            loadingIndicator.style.display = 'inline';
+
+            fetch(`/load_students_by_course_semester/?course=${encodeURIComponent(course)}&semester=${semester}`)
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Students data:", data);
+                    studentTableBody.innerHTML = '';
+                    if (data.students && data.students.length > 0) {
+                        data.students.forEach(student => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${student.register_id}</td>
+                                <td>${student.name}</td>
+                                <td><input type="number" name="internalMarks_${student.id}" min="0" max="100" required></td>
+                                <td><input type="number" name="externalMarks_${student.id}" min="0" max="100" required></td>
+                            `;
+                            studentTableBody.appendChild(row);
+                        });
+                    } else {
+                        studentTableBody.innerHTML = '<tr><td colspan="4">No students found.</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    alert("Error loading students: " + error.message);
+                })
+                .finally(() => {
+                    loadingIndicator.style.display = 'none';
+                });
+        }
+
+        document.getElementById('course').addEventListener('change', () => {
+            loadSubjects();
+            loadStudents();
+        });
+        document.getElementById('semester').addEventListener('change', () => {
+            loadSubjects();
+            loadStudents();
+        });
+
+        document.getElementById('marksForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log("Form submission triggered");
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+
+            const course = document.getElementById('course').value;
+            const semester = document.getElementById('semester').value;
+            const examName = document.getElementById('exam_name').value;
+            const subject = document.getElementById('subject').value;
+
+            console.log("Form values:", { course, semester, examName, subject });
+
+            if (!course || !semester || !examName || !subject) {
+                alert("Please select all required fields.");
+                submitButton.disabled = false;
+                return;
+            }
+
+            const marksData = {};
+            const studentRows = document.querySelectorAll('#studentTableBody tr');
+            studentRows.forEach(row => {
+                const inputs = row.querySelectorAll('input[type="number"]');
+                if (inputs.length === 2) {
+                    const studentId = inputs[0].name.split('_')[1];
+                    const internalMarks = inputs[0].value;
+                    const externalMarks = inputs[1].value;
+                    marksData[studentId] = {
+                        'internal': internalMarks,
+                        'external': externalMarks
+                    };
+                }
+            });
+
+            console.log("Marks data:", marksData);
+
+            if (Object.keys(marksData).length === 0) {
+                alert("No students or marks data to submit.");
+                submitButton.disabled = false;
+                return;
+            }
+
+            fetch('{% url "record_marks" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({
+                    course: course,
+                    semester: semester,
+                    exam_name: examName,
+                    subject: subject,
+                    marks_data: marksData
+                })
+            })
+            .then(response => {
+                console.log("Response status:", response.status);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Server response:", data);
+                if (data.success) {
+                    alert(data.success);
+                    document.getElementById('marksForm').reset();
+                    loadSubjects();
+                    loadStudents();
+                } else if (data.warning) {
+                    alert(data.warning);
+                } else if (data.error) {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("Fetch error:", error);
+                alert("Error submitting marks: " + error.message);
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+            });
+        });
+
+        // Initial load
+        loadSubjects();
+        loadStudents();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

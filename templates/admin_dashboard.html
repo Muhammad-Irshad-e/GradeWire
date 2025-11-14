@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css'%}">
+<style>
+        .content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border:none;
+            border-radius: 3px;
+        }
+
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+        .header{
+            margin-top: 50px;
+        }
+
+</style>
+</head>
+<body>
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}" >Home</a>
+        <a href="{% url 'ManageStudent' %}" >Manage Students</a>
+        <a href="{% url 'approve_students' %}" >Approve Students</a>
+
+        <a href="{% url 'ManageTeacher' %}"  >Manage Teachers</a>
+        <a href="{% url 'adminMgCourse' %}"  >Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}" >Manage Subjects</a>
+
+        <a href="{% url 'logout' %}" class="logout" >Logout</a>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
+
+        <div class="header">
+            <h1>Welcome, Admin</h1>
+        </div>
+      
+ 
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+</body>
+</html>
