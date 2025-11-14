@@ -5,7 +5,7 @@ It provides separate role-based dashboards for **Admin**, **Teachers**, and **St
 
 GradeWire is developed using **Django (Python)**, HTML, CSS, JavaScript, and SQLite.
 
----
+----
 
 ## 📌 **Table of Contents**
 
