@@ -144,7 +144,7 @@ The system includes:
 ### **1. Clone the Repository**
 
 ```bash
-git clone https://github.com/Muhammad-Irshad-e/gradewire.git
+git clone https://github.com/Muhammad-Irshad-e/GradeWire.git
 cd gradewire
 ```
 
