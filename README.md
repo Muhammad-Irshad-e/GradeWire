@@ -200,12 +200,3 @@ Now open:
 
 
 
-# 👥 **Contributors**
-
-* **Muhammad Irshad**
-* **Muhammad Shammas**
-* **Jumail K**
-
-Guided by:
-**Dr. Minimol VK**
-
