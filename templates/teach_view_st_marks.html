@@ -72,7 +72,7 @@
         <form method="get" action="{% url 'view_student_marks' %}">
             <!-- Department Selection -->
             <label for="department">Select Department:</label>
-            <select id="department" name="department" required onchange="updateCourses()">
+            <select id="department" name="department" required onchange="updateSubjects()">
                 <option value="">Select Department</option>
                 {% for course in courses %}
                     <option value="{{ course.id }}" {% if course.id|stringformat:'s' == selected_department %}selected{% endif %}>

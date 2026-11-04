@@ -206,8 +206,11 @@ opacity: 0.8;  /* Slight transparency on hover */
                                 <td>
                                     <!-- Edit Button -->
                                     <a href="{% url 'edit_subject' s.id %}"  class="action-btn edit-btn">Edit</a> 
-                                    <!-- Delete Button -->
-                                    <a href="{% url 'delete_subject' s.id %}" class="action-btn delete-btn" onclick="return confirm('Are you sure you want to delete this subject?');" >Delete</a>
+                                    <!-- Delete Button (POST) -->
+                                    <form method="POST" action="{% url 'delete_subject' s.id %}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this subject?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn delete-btn">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
                         {% endfor %}

@@ -17,9 +17,9 @@ https://templatemo.com/tm-535-softy-pinko
 -->
 
     <!-- Additional CSS Files -->
-    <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/bootstrap.min.css' %}">
 
-    <link rel="stylesheet" type="text/css" href="static/assets/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.css' %}">
 
     <link rel="stylesheet" href="{% static 'assets/css/templatemo-softy-pinko.css' %}">
     <style>
@@ -61,22 +61,89 @@ https://templatemo.com/tm-535-softy-pinko
   color: #5ac0df;
   letter-spacing: 0.25px;
 }
-.feature-link {
-    display:  inline-block;
-    text-decoration: none; /* Remove default underline */
-    color: inherit; /* Ensure text color is inherited */
+.portal-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
+    min-height: 400px !important;
+    padding: 35px 25px 30px !important;
+    text-align: center !important;
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-.feature-link:hover .features-small-item {
-    /* Optional: Add hover effects if needed */
-    background-color: rgba(0, 0, 0, 0.1); /* Example hover effect */
+.portal-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 35px rgba(90, 192, 223, 0.25) !important;
 }
 
-.feature-link .features-small-item {
-    cursor: pointer; /* Indicates clickable */
+.portal-card .icon {
+    margin: 0 auto 20px !important;
 }
-.features-small-item:hover .icon {
-  background-color: #5ac0df;
+
+.portal-card .features-title {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    margin-bottom: 12px !important;
+}
+
+.portal-card p {
+    font-size: 14px !important;
+    color: #666 !important;
+    line-height: 1.6 !important;
+    margin-bottom: 25px !important;
+    flex-grow: 1 !important;
+}
+
+.portal-btn-group {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-top: auto !important;
+}
+
+.portal-btn {
+    float: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 9px 24px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    border-radius: 25px !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+.portal-btn-primary {
+    background: linear-gradient(135deg, #5ac0df 0%, #4388ce 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 3px 12px rgba(67, 136, 206, 0.25) !important;
+}
+
+.portal-btn-primary:hover {
+    background: linear-gradient(135deg, #4388ce 0%, #316fa8 100%) !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 15px rgba(67, 136, 206, 0.35) !important;
+}
+
+.portal-btn-secondary {
+    background: #f1f3f5 !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+.portal-btn-secondary:hover {
+    background: #e9ecef !important;
+    color: #212529 !important;
+    transform: translateY(-1px) !important;
 }
 
 #preloader {
@@ -232,7 +299,7 @@ footer .social li a:hover {
                     <nav class="main-nav">
                         <!-- ***** Logo Start ***** -->
                         <a href="#" class="logo">
-                            <img src="static/assets/images/gradewire.png" alt="Softy Pinko" height="40px"/>
+                            <img src="{% static 'assets/images/gradewire.png' %}" alt="GradeWire" height="40px"/>
                         </a>
                         <!-- ***** Logo End ***** -->
                         <!-- ***** Menu Start ***** -->
@@ -253,17 +320,15 @@ footer .social li a:hover {
     <!-- ***** Header Area End ***** -->
 
     <!-- ***** Welcome Area Start ***** -->
-    <div class="welcome-area" id="welcome" style="  background-image: url('static/assets/images/banner-bg-2.png');
-">
+    <div class="welcome-area" id="welcome" style="background-image: url('{% static 'assets/images/banner-bg-2.png' %}');">
 
         <!-- ***** Header Text Start ***** -->
         <div class="header-text">
             <div class="container">
                 <div class="row">
                     <div class="offset-xl-3 col-xl-6 offset-lg-2 col-lg-8 col-md-12 col-sm-12">
-                        <h1>We provide the best <strong>strategy</strong><br>to boost your <strong>student performance</strong></h1>
-                        <p>GradeWire is a professional academic management system for teachers, students, and admins — track marks, manage attendance, and monitor progress with ease.</p>
-
+                        <h1>Comprehensive <strong>Academic Management</strong><br>& Grade <strong>Tracking System</strong></h1>
+                        <p>GradeWire streamlines course management, daily attendance logging, and student performance tracking for administrators, teachers, and students.</p>
                         <a href="#features" class="main-button-slider">Discover More</a>
                     </div>
                 </div>
@@ -280,47 +345,51 @@ footer .social li a:hover {
                 <div class="col-lg-12">
                     <div class="row">
                         <!-- ***** Features Small Item Start ***** -->
-<div class="col-lg-4 col-md-6 col-sm-6 col-12" data-scroll-reveal="enter bottom move 50px over 0.6s after 0.2s">
-    <a href="{% url 'adminlogin' %}" class="feature-link">
-        <div class="features-small-item">
-            <div class="icon">
-                <i><img src="static/assets/images/administrator.png" alt=""></i>
-            </div>
-            <h5 class="features-title">Admin</h5>
-            <p>Admins can log in to manage users, control operations, and update system data.</p>
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-12 d-flex" data-scroll-reveal="enter bottom move 50px over 0.6s after 0.2s">
+                            <div class="features-small-item portal-card w-100">
+                                <div class="icon">
+                                    <i><img src="{% static 'assets/images/administrator.png' %}" alt="Administrator"></i>
+                                </div>
+                                <h5 class="features-title">Admin Portal</h5>
+                                <p>Manage departments, courses, subjects, faculty records, and student enrollment approvals.</p>
+                                <div class="portal-btn-group">
+                                    <a href="{% url 'adminlogin' %}" class="portal-btn portal-btn-primary">Log In</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ***** Features Small Item End ***** -->
 
-        </div>
-    </a>
-</div>
-<!-- ***** Features Small Item End ***** -->
+                        <!-- ***** Features Small Item Start ***** -->
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-12 d-flex" data-scroll-reveal="enter bottom move 50px over 0.6s after 0.4s">
+                            <div class="features-small-item portal-card w-100">
+                                <div class="icon">
+                                    <i><img src="{% static 'assets/images/student.png' %}" alt="Student"></i>
+                                </div>
+                                <h5 class="features-title">Student Portal</h5>
+                                <p>Monitor personal attendance percentages and inspect semester examination grades.</p>
+                                <div class="portal-btn-group">
+                                    <a href="{% url 'studentLogin' %}" class="portal-btn portal-btn-primary">Log In</a>
+                                    <a href="{% url 'studentRegister' %}" class="portal-btn portal-btn-secondary">Register</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ***** Features Small Item End ***** -->
 
-<!-- ***** Features Small Item Start ***** -->
-<div class="col-lg-4 col-md-6 col-sm-6 col-12" data-scroll-reveal="enter bottom move 50px over 0.6s after 0.4s">
-    <a href="{% url 'studentRegister' %}" class="feature-link">
-        <div class="features-small-item">
-            <div class="icon">
-                <i><img src="static/assets/images/student.png" alt=""></i>
-            </div>
-            <h5 class="features-title">Student</h5>
-            <p>Students can log in to view their marks, track academic progress. </p>
-        </div>
-    </a>
-</div>
-<!-- ***** Features Small Item End ***** -->
-
-<!-- ***** Features Small Item Start ***** -->
-<div class="col-lg-4 col-md-6 col-sm-6 col-12" data-scroll-reveal="enter bottom move 50px over 0.6s after 0.6s">
-    <a href="{% url 'teacherRegister' %}" class="feature-link">
-        <div class="features-small-item">
-            <div class="icon">
-                <i><img src="static/assets/images/teacher.png" alt=""></i>
-            </div>
-            <h5 class="features-title">Teacher</h5>
-            <p>Access your teacher panel to manage students and update academic information.</p>
-        </div>
-    </a>
-</div>
-<!-- ***** Features Small Item End ***** -->
+                        <!-- ***** Features Small Item Start ***** -->
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-12 d-flex" data-scroll-reveal="enter bottom move 50px over 0.6s after 0.6s">
+                            <div class="features-small-item portal-card w-100">
+                                <div class="icon">
+                                    <i><img src="{% static 'assets/images/teacher.png' %}" alt="Teacher"></i>
+                                </div>
+                                <h5 class="features-title">Teacher Portal</h5>
+                                <p>Record daily subject attendance, enter examination marks, and track student statistics.</p>
+                                <div class="portal-btn-group">
+                                    <a href="{% url 'teacherLogin' %}" class="portal-btn portal-btn-primary">Log In</a>
+                                    <a href="{% url 'teacherRegister' %}" class="portal-btn portal-btn-secondary">Register</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ***** Features Small Item End ***** -->
 
                         
                         <!-- ***** Features Small Item End ***** -->
@@ -336,7 +405,7 @@ footer .social li a:hover {
         <div class="container">
             <div class="row">
                 <div class="col-lg-5 col-md-12 col-sm-12 align-self-center" data-scroll-reveal="enter left move 30px over 0.6s after 0.4s">
-                    <img src="static/assets/images/left-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
+                    <img src="{% static 'assets/images/left-image.png' %}" class="rounded img-fluid d-block mx-auto" alt="App">
                 </div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-6 col-md-12 col-sm-12 align-self-center mobile-top-fix">
@@ -371,7 +440,7 @@ footer .social li a:hover {
                 </div>
                 <div class="col-lg-1"></div>
                 <div class="col-lg-5 col-md-12 col-sm-12 align-self-center mobile-bottom-fix-big" data-scroll-reveal="enter right move 30px over 0.6s after 0.4s">
-                    <img src="static/assets/images/right-image.png" class="rounded img-fluid d-block mx-auto" alt="App">
+                    <img src="{% static 'assets/images/right-image.png' %}" class="rounded img-fluid d-block mx-auto" alt="App">
                 </div>
             </div>
         </div>
@@ -410,27 +479,27 @@ footer .social li a:hover {
             </div>
             <div class="row">
                 <div class="col-lg-12">
-                    <p class="copyright">Copyright &copy; 2020 GradeWire Company</p>
+                    <p class="copyright">Copyright &copy; GradeWire Academic Management System</p>
                 </div>
             </div>
         </div>
     </footer>
     
     <!-- jQuery -->
-    <script src="static/assets/js/jquery-2.1.0.min.js"></script>
+    <script src="{% static 'assets/js/jquery-2.1.0.min.js' %}"></script>
 
     <!-- Bootstrap -->
-    <script src="static/assets/js/popper.js"></script>
-    <script src="static/assets/js/bootstrap.min.js"></script>
+    <script src="{% static 'assets/js/popper.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
 
     <!-- Plugins -->
-    <script src="static/assets/js/scrollreveal.min.js"></script>
-    <script src="static/assets/js/waypoints.min.js"></script>
-    <script src="static/assets/js/jquery.counterup.min.js"></script>
-    <script src="static/assets/js/imgfix.min.js"></script> 
+    <script src="{% static 'assets/js/scrollreveal.min.js' %}"></script>
+    <script src="{% static 'assets/js/waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'assets/js/imgfix.min.js' %}"></script> 
     
     <!-- Global Init -->
-    <script src="static/assets/js/custom.js"></script>
+    <script src="{% static 'assets/js/custom.js' %}"></script>
 
   </body>
 </html>

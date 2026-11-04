@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.views.generic import TemplateView
 urlpatterns = [
     path('', views.index,name='index'),
+    path('login/', views.index, name='login'),  # Fallback for generic login references
     path('logout/', views.logout_view, name='logout'),  # Logout URL
 
     path('teacherlogin/', views.teacherLogin,name='teacherLogin'),

@@ -18,53 +18,84 @@ function showSection(sectionId) {
 
 
 function searchStudent() {
-    const searchValue = document.getElementById('searchStudent').value.toLowerCase();
-    const tableRows = document.getElementById('studentTableBody').querySelectorAll('tr');
+    const searchInput = document.getElementById('searchStudent');
+    const tableBody = document.getElementById('studentTableBody');
+    if (!searchInput || !tableBody) return;
+
+    const searchValue = searchInput.value.toLowerCase();
+    const tableRows = tableBody.querySelectorAll('tr');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const cancelSearchButton = document.getElementById('cancelSearch');
+    let matchFound = false;
 
     tableRows.forEach(row => {
-        const name = row.cells[1].textContent.toLowerCase();
-        const studentClass = row.cells[2].textContent.toLowerCase();
+        const cells = Array.from(row.querySelectorAll('td'));
+        if (cells.length === 0) return;
+        const searchableCells = cells.slice(0, cells.length - 1);
+        const rowText = searchableCells.map(cell => cell.textContent.toLowerCase()).join(' ');
 
-        if (name.includes(searchValue) || studentClass.includes(searchValue)) {
+        if (rowText.includes(searchValue)) {
             row.style.display = '';
+            matchFound = true;
         } else {
             row.style.display = 'none';
         }
     });
+
+    if (noResultsMessage) {
+        noResultsMessage.style.display = (!matchFound && searchValue !== '') ? 'block' : 'none';
+    }
+    if (cancelSearchButton) {
+        cancelSearchButton.style.display = (searchValue !== '') ? 'inline' : 'none';
+    }
 }
-
-
-
 
 function searchTeacher() {
-const searchValue = document.getElementById('searchTeacher').value.toLowerCase();
-const tableRows = document.getElementById('teacherTableBody').querySelectorAll('tr');
+    const searchInput = document.getElementById('searchTeacher');
+    const tableBody = document.getElementById('teacherTableBody');
+    if (!searchInput || !tableBody) return;
 
-tableRows.forEach(row => {
-const name = row.cells[1].textContent.toLowerCase();
-const subject = row.cells[2].textContent.toLowerCase();
+    const searchValue = searchInput.value.toLowerCase();
+    const tableRows = tableBody.querySelectorAll('tr');
+    const noResultsMessage = document.getElementById('noTeacherResultsMessage');
+    const cancelSearchButton = document.getElementById('cancelTeacherSearch');
+    let matchFound = false;
 
-if (name.includes(searchValue) || subject.includes(searchValue)) {
-    row.style.display = '';
-} else {
-    row.style.display = 'none';
-}
-});
-}
+    tableRows.forEach(row => {
+        const cells = Array.from(row.querySelectorAll('td'));
+        if (cells.length === 0) return;
+        const searchableCells = cells.slice(0, cells.length - 1);
+        const rowText = searchableCells.map(cell => cell.textContent.toLowerCase()).join(' ');
 
+        if (rowText.includes(searchValue)) {
+            row.style.display = '';
+            matchFound = true;
+        } else {
+            row.style.display = 'none';
+        }
+    });
 
-
-// Initializing the charts
-
-const studentsCourseChartCtx = document.getElementById('studentsCourseChart').getContext('2d');
-new Chart(studentsCourseChartCtx, {
-    type: 'bar',
-    data: {
-        labels: ['Course 1', 'Course 2', 'Course 3', 'Course 4'],
-        datasets: [{
-            label: 'Number of Students',
-            data: [30, 25, 40, 25],
-            backgroundColor: '#1e90ff',
-        }]
+    if (noResultsMessage) {
+        noResultsMessage.style.display = (!matchFound && searchValue !== '') ? 'block' : 'none';
     }
-});
+    if (cancelSearchButton) {
+        cancelSearchButton.style.display = (searchValue !== '') ? 'inline' : 'none';
+    }
+}
+
+// Initializing the charts safely only if the canvas element exists
+const studentsCourseChartEl = document.getElementById('studentsCourseChart');
+if (studentsCourseChartEl && typeof Chart !== 'undefined') {
+    const studentsCourseChartCtx = studentsCourseChartEl.getContext('2d');
+    new Chart(studentsCourseChartCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Course 1', 'Course 2', 'Course 3', 'Course 4'],
+            datasets: [{
+                label: 'Number of Students',
+                data: [30, 25, 40, 25],
+                backgroundColor: '#1e90ff',
+            }]
+        }
+    });
+}

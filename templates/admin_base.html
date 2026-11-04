@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Panel - GradeWire{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css' %}">
+    <style>
+        .content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 25px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border: none;
+            border-radius: 3px;
+        }
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+    </style>
+    {% block admin_styles %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="{% url 'adminHome' %}">Home</a>
+        <a href="{% url 'ManageStudent' %}">Manage Students</a>
+        <a href="{% url 'approve_students' %}">Approve Students</a>
+        <a href="{% url 'ManageTeacher' %}">Manage Teachers</a>
+        <a href="{% url 'adminMgCourse' %}">Manage Courses</a>
+        <a href="{% url 'ManageSubject' %}">Manage Subjects</a>
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    </div>
+
+    <div class="content">
+        {% block back_button %}
+        <button class="back-button" onclick="history.back()">Back</button>
+        {% endblock %}
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'assets/js/admin-side.js' %}"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
+{% endblock %}

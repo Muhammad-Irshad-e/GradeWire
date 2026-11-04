@@ -1,108 +1,43 @@
+{% extends 'teacher_base.html' %}
 
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css'%}">
-<style>
-    .main-content {
-            position: relative;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-        }
-        .back-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
-            color: #fff;
-            background-color: #1e90ff;
-            border:none;
-            border-radius: 3px;
-        }
-    
-        .back-button:hover {
-            background-color: #0c60b5;
-        }
+{% block title %}Student Details - GradeWire{% endblock %}
 
-    .section{
-      margin-top: 35px;
-    }
-
-</style>
-</head>
-<body>
-        <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
-        <!-- Sidebar -->
-        <div class="sidebar">
-
-            <h2>Teacher Dashboard</h2>
-            
-            <a href="{% url 'teachHome' %}" >Home</a>
-            <a href="{% url 'teacherProfile' %}" >Profile</a>
-            <a href="{% url 'teachStAttendance' %}" >Attendance</a>
-            <a href="{% url 'view_student_attendance' %}" > View Attendance</a>
-
-            <a href="{% url 'teachStMarks' %}" >Marks</a>
-            <a href="{% url 'view_student_marks' %}">View Marks</a>
-
-            <a href="{% url 'teachStStats' %}">Stats</a>
-            <a href="{% url 'StudentDetail' %}" >Students</a>
-            <!-- Logout option at the very bottom (only for Desktop) -->
-            <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
-           
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
-
-
-<div id="students" class="section">
-    <h2>View Student Details</h2>
-    <div class="attendance-table">
-        <table>
+{% block content %}
+<div id="students" class="section" style="margin-top: 20px;">
+    <h2 style="margin-bottom: 20px; color: #1e90ff;">Student Directory</h2>
+    <div class="attendance-table" style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr>
-                    
-                    <th>Name</th>
-                    <th>Class</th>
-                    <th>Department</th>
-                    <th>Register id</th>
-                    <th>Mobile</th>
-                    <th>Email</th>
-                    <th>Parent</th>
-                    <th>Parent no</th>
+                <tr style="background-color: #1e90ff; color: #fff;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">Name</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Class</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Department</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Register ID</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Mobile</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Email</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Parent</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">Parent No</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody">
                 {% for s in student %}
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.name }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.Class }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.department }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.register_id }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.mobile }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.email }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.parent }}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">{{ s.parent_no }}</td>
+                </tr>
+                {% empty %}
                 <tr>
-                    <td>{{s.name}}</td>
-                    <td>{{s.Class}}</td>
-                    <td>{{s.department}}</td>
-                    <td>{{s.register_id}}</td>
-                    <td>{{s.mobile}}</td>
-                    <td>{{s.email}}</td>
-                    <td>{{s.parent}}</td>
-                    <td>{{s.parent_no}}</td>
+                    <td colspan="8" style="padding: 15px; text-align: center; color: #777;">No students found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        </div>
-</div>
     </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('active');
-        }
-        
-    </script>
-</body>
-</html>
+</div>
+{% endblock %}

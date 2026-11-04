@@ -1,120 +1,81 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Teacher</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/admin-style.css'%}">
-    <style>
-        .content form {
-            width: 80%; /* Adjust as needed */
-            margin: 0 auto; /* Center the form */
-            padding: 20px;
-            background-color: #f9f9f9; /* Light gray background for the form */
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-        }
+{% extends 'admin_base.html' %}
 
-        .content form div {
-            margin-bottom: 15px;
-        }
+{% block title %}Edit Subject - GradeWire{% endblock %}
 
-        .content form label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
+{% block admin_styles %}
+<style>
+    .edit-form-card {
+        max-width: 650px;
+        margin: 20px auto;
+        padding: 25px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    .form-group {
+        margin-bottom: 18px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #333;
+    }
+    .form-group input, .form-group select {
+        width: 100%;
+        padding: 9px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+    .submit-btn {
+        background-color: #1e90ff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .submit-btn:hover {
+        background-color: #0c60b5;
+    }
+</style>
+{% endblock %}
 
-        .content form input[type="text"],
-        .content form input[type="email"],
-        .content form input[type="password"] {
-            width: calc(100% - 12px);
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        .content form button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .content form button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .content{
-    position: relative;
-}
-.back-button {
-            position: absolute;
-            top: 25px;
-            right: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
-            color: #fff;
-            background-color: #1e90ff;
-            border:none;
-            border-radius: 3px;
-        }
-
-        .back-button:hover {
-            background-color: #0c60b5;
-        }
-        
-    </style>
-</head>
-<body>
-    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
-    <div class="sidebar">
-        <h2>Admin Dashboard</h2>
-        <a href="{% url 'adminHome' %}" onclick="showSection('home')">Home</a>
-        <a href="{% url 'ManageStudent' %}" >Manage Students</a>
-        <a href="{% url 'approve_students' %}" >Approve Students</a>
-
-        <a href="{% url 'ManageTeacher' %}" >Manage Teachers</a>
-        <a href="{% url 'ManageCourse' %}" >Manage Courses</a>
-        <a href="{% url 'ManageSubject' %}" >Manage Subjects</a>
-
-        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
-    </div>
-
-    <div class="content">
-        <button class="back-button" onclick="history.back()">Back</button>    <!-- admin Login Page -->
-
-        <h2>Edit Subject</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <div>
-                <label for="Semester">Semester</label>
-                <input type="semester" name="Semester" value="{{ subject.semester }}" placeholder="Semester" required>
-            </div>
-            <div>
-                <label for="subjectCode">Subject Code</label>
-                <input type="text" name="subjectCode" value="{{ subject.subject_code }}" placeholder="Subject Code" required>
-            </div>
-            
-            <div>
-                <label for="subjectName">Subject</label>
-                <input type="text" name="subjectName" value="{{ subject.name }}" placeholder="Subject Name" required>
-            </div>
-            <div>
-                <label for="courseName">Course</label>
-                <input type="text" name="courseName" value="{{ subject.course }}" placeholder="course Name" required>
-            </div>
-     
-            <button type="submit">Update Subject</button>
-        </form>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{% static 'assets/js/admin-side.js' %}"></script>
-    
-</body>
-</html>
+{% block content %}
+<div class="edit-form-card">
+    <h2 style="margin-bottom: 20px; color: #1e90ff;">Edit Subject</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="Semester">Semester</label>
+            <select name="Semester" id="Semester" required>
+                {% for val, label in semester_choices %}
+                    <option value="{{ val }}" {% if subject.semester == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="subjectCode">Subject Code</label>
+            <input type="text" id="subjectCode" name="subjectCode" value="{{ subject.subject_code }}" placeholder="e.g. CS101" required>
+        </div>
+        <div class="form-group">
+            <label for="subjectName">Subject Name</label>
+            <input type="text" id="subjectName" name="subjectName" value="{{ subject.name }}" placeholder="Subject Name" required>
+        </div>
+        <div class="form-group">
+            <label for="courseName">Course / Department</label>
+            <select name="courseName" id="courseName" required>
+                {% for course in courses %}
+                    <option value="{{ course.id }}" {% if subject.course.id == course.id %}selected{% endif %}>{{ course.course_name }} ({{ course.course_id }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="submit-btn">Update Subject</button>
+    </form>
+</div>
+{% endblock %}

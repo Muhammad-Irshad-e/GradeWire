@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teacher Panel - GradeWire{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/teach-style.css' %}">
+    <style>
+        .main-content {
+            position: relative;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #fff;
+            background-color: #1e90ff;
+            border: none;
+            border-radius: 3px;
+        }
+        .back-button:hover {
+            background-color: #0c60b5;
+        }
+    </style>
+    {% block teacher_styles %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <div class="menu-toggle" onclick="toggleSidebar()">☰ Menu</div>
+    
+    <div class="sidebar">
+        <h2>Teacher Dashboard</h2>
+        <a href="{% url 'teachHome' %}">Home</a>
+        <a href="{% url 'teacherProfile' %}">Profile</a>
+        <a href="{% url 'teachStAttendance' %}">Attendance</a>
+        <a href="{% url 'view_student_attendance' %}">View Attendance</a>
+        <a href="{% url 'teachStMarks' %}">Marks</a>
+        <a href="{% url 'view_student_marks' %}">View Marks</a>
+        <a href="{% url 'teachStStats' %}">Stats</a>
+        <a href="{% url 'StudentDetail' %}">Students</a>
+        <a href="{% url 'logout' %}" class="logout" id="logoutButton">Logout</a>
+    </div>
+
+    <div class="main-content">
+        {% block back_button %}
+        <button class="back-button" onclick="history.back()">Back</button>
+        {% endblock %}
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+            }
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
+{% endblock %}

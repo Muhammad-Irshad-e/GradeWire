@@ -133,10 +133,13 @@
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Password" name="password" required>
             <button type="submit" class="btn">Login</button>
-
         </form>
 
-         
+        {% if messages %}
+        {% for message in messages %}
+          <p style="color:red; text-align: center; margin-top: 10px;">{{ message }}</p>
+        {% endfor %}
+        {% endif %}
     </div>
 
 </body>
