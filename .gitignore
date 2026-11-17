@@ -8,8 +8,3 @@ __pycache__/
 venv/
 env/
 .venv/
-
-# Documentation and improvement reports
-IMPROVEMENTS_NEEDED.md
-ISSUES_REPORT.txt
-PROJECT_DOCUMENTATION*
